@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+</head>
+</head>
+<body>
+    <div class="container"> 
+        <form class="form-control" action="#" onsubmit="onsignup(event)" style="width: 1400px; height: 400px;">
+        <h1 style="text-align: center; color: crimson; font-weight: 800;" >EXPENSE TRACKER</h1>
+        <label for="amount" class="form-label">Expense Amount</label>
+        <input type="number" name="amount" id="amount" class="form-control" required>
+        <label for="expense" class="form-label">Expense Description</label>
+        <input type="text" name="expense" id="expense" class="form-control" required>
+        <label for="category" class="form-label">Choose a category</label><br>
+        <select class="form-select" name="category" id="category" aria-label="Default select example">
+            <option selected></option>
+            <option value="Fuel" id="1">Fuel</option>
+            <option value="Electricity" id="2">Electricity</option>
+            <option value="Movies" id="3">Movies</option>
+            <option value="Transport" id="4">Transport</option>
+            <option value="Food" id="5">Food</option>
+            <option value="Games" id="6">Games</option>
+        </select>
+        <button class="btn btn-dark btn-lg" type="submit" style=" padding: 10px; margin: 30px; text-align: center; position:fixed ;top: 300px;;right:1075px ">Add an expense</button>
+        </form>
+        <ul class="list-group" id="items">
+
+        </ul>
+  </div>  
+  <script>
+    
+    var itemList = document.getElementById("items");
+    function onsignup(event){
+        event.preventDefault();
+        var amount=event.target.amount.value;
+        var expense=event.target.expense.value;
+        var category=event.target.category.value;
+
+        const myObj={
+            amount,
+            expense,
+            category
+        }
+        var myObjString=JSON.stringify(myObj);
+        localStorage.setItem(myObj.expense,myObjString);
+
+        var newLi = document.createElement("li");
+        newLi.className = "list-group-item";
+        newLi.id = "list";
+        newLi.style.width = "500px";
+        newLi.style.margin="10px"
+        newLi.style.color = "black";
+        var liText=document.createTextNode(myObj.amount + "-" + myObj.expense + "-" + myObj.category);
+        newLi.appendChild(liText);
+        var listGroup=document.querySelector(".list-group");
+        var newBtn = document.createElement("button");
+        newBtn.className = "btn btn-danger btn-sm float-right delete";
+        newBtn.appendChild(document.createTextNode("DELETE"));
+        newBtn.value = "delete";
+        newBtn.style.padding="5px"
+        newBtn.style.margin="5px"
+        newLi.appendChild(newBtn);
+        itemList.appendChild(newLi);
+        newBtn.onclick = () => {
+          localStorage.removeItem(myObj.expense);
+          itemList.removeChild(newLi);
+        };
+        var editButton = document.createElement("button");
+        editButton.value = "edit";
+        editButton.className = "btn btn-secondary btn-sm float-right edit";
+        editButton.style.padding="5px";
+        editButton.style.margin="5px";
+        editButton.appendChild(document.createTextNode(" EDIT "));
+        newLi.appendChild(editButton);
+        editButton.onclick = () => {
+          localStorage.removeItem(myObj.expense);
+          itemList.removeChild(newLi);
+          document.getElementById("amount").value=myObj.amount;
+        document.getElementById("expense").value=myObj.expense;
+        document.getElementById("category").value=myObj.category;
+        }
+    }
+  </script>
+</body>
+</html>
