@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form id="form">
+      <label for="name">Name</label><br />
+      <input type="text" id="name" required /><br />
+      <label for="email">E-Mail</label><br />
+      <input type="email" id="email" required /><br />
+      <label for="ph">Phone Number</label><br />
+      <input type="number" id="ph" required /><br />
+      <button>SUBMIT</button>
+    </form>
+    <ul id="list"></ul>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
+    <script>
+      var form = document.getElementById("form");
+      form.addEventListener("submit", onsignup);
+      function onsignup(event) {
+        event.preventDefault();
+        var Name = event.target.name.value;
+        var Email = event.target.email.value;
+        var Phone = event.target.ph.value;
+
+        const myObj = {
+          Name,
+          Email,
+          Phone,
+        };
+        axios
+          .post(
+            "https://crudcrud.com/api/4ed8ed9e2e0140b6a5dc2accde3a025e/appointmentData",
+            myObj
+          )
+          .then((response) => {
+            showNewUserOnScreen(response.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+      window.addEventListener("DOMContentLoaded", () => {
+        axios
+          .get(
+            "https://crudcrud.com/api/4ed8ed9e2e0140b6a5dc2accde3a025e/appointmentData"
+          )
+          .then((response) => {
+            for (var i = 0; i < response.data.length; i++) {
+              showNewUserOnScreen(response.data[i]);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      });
+      function showNewUserOnScreen(user) {
+        document.getElementById("name").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("ph").value = "";
+
+        const parentNode = document.getElementById("list");
+        var newLi = document.createElement("li");
+        newLi.id = `${user._id}`;
+        newLi.appendChild(
+          document.createTextNode(
+            `${user.Name} - ${user.Email} - ${user.Phone}`
+          )
+        );
+        var delBtn = document.createElement("button");
+        delBtn.onclick = function () {
+          deleteUser(`${user._id}`);
+        };
+        delBtn.value = "delete";
+        delBtn.appendChild(document.createTextNode("DELETE"));
+        newLi.appendChild(delBtn);
+        var editBtn = document.createElement("button");
+        editBtn.onclick = function () {
+          editUser(
+            `${user._id}`,
+            `${user.Name}`,
+            `${user.Email}`,
+            `${user.Phone}`
+          );
+        };
+        editBtn.value = "edit";
+        editBtn.appendChild(document.createTextNode("EDIT"));
+        newLi.appendChild(editBtn);
+        parentNode.appendChild(newLi);
+      }
+      function deleteUser(userId) {
+        axios
+          .delete(
+            `https://crudcrud.com/api/4ed8ed9e2e0140b6a5dc2accde3a025e/appointmentData/${userId}`
+          )
+          .then((response) => {
+            deleteUserFromScreen(userId);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+      function deleteUserFromScreen(userId) {
+        const parentNode = document.getElementById("list");
+        const childNodeToBeDeleted = document.getElementById(userId);
+        if (childNodeToBeDeleted) {
+          parentNode.removeChild(childNodeToBeDeleted);
+        }
+      }
+
+      function editUser(userId, name, email, phone) {
+        document.getElementById("name").value = name;
+        document.getElementById("email").value = email;
+        document.getElementById("ph").value = phone;
+        deleteUser(userId);
+      }
+    </script>
+  </body>
+</html>
